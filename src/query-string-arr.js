@@ -5,7 +5,6 @@ const decodeComponent = require('decode-uri-component')
 
 function parserForArrayFormat() {
   return (key, value, accumulator) => {
-    let result
     if (accumulator[key] === undefined) {
       accumulator[key] = value
       return
@@ -37,6 +36,20 @@ function decode(value, options) {
   }
 
   return value
+}
+
+function keysSorter(input) {
+  if (Array.isArray(input)) {
+    return input.sort()
+  }
+
+  if (typeof input === 'object') {
+    return keysSorter(Object.keys(input))
+      .sort((a, b) => Number(a) - Number(b))
+      .map(key => input[key])
+  }
+
+  return input
 }
 
 function parse(input, type) {
