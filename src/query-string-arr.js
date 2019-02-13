@@ -109,3 +109,49 @@ function parse(input, type) {
 }
 
 exports.parse = parse
+
+
+exports.stringify = (obj, options) => {
+  if (!obj) {
+    return ''
+  }
+
+  options = Object.assign({
+    encode: true,
+    strict: true,
+    arrayFormat: 'none',
+  }, options)
+
+  const formatter = encoderForArrayFormat(options)
+  const keys = Object.keys(obj)
+
+  if (options.sort !== false) {
+    keys.sort(options.sort)
+  }
+
+  return keys.map((key) => {
+    const value = obj[key]
+
+    if (value === undefined) {
+      return ''
+    }
+
+    if (value === null) {
+      return encode(key, options)
+    }
+
+    if (Array.isArray(value)) {
+      const result = []
+
+      for (const value2 of value.slice()) {
+        if (value2 !== undefined) {
+          result.push(formatter(key, value2, result.length))
+        }
+      }
+
+      return result.join('&')
+    }
+
+    return `${encode(key, options)}=${encode(value, options)}`
+  }).filter(x => x.length > 0).join('&')
+}
