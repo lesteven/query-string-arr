@@ -22,14 +22,6 @@ function encode(value, options) {
   return value
 }
 
-function encoderForArrayFormat(options) {
-  return (key, value) => (value === null ? encode(key, options) : [
-    encode(key, options),
-    '=',
-    encode(value, options),
-  ].join(''))
-}
-
 function decode(value, options) {
   if (options.decode) {
     return decodeComponent(value)
@@ -110,6 +102,13 @@ function parse(input, type) {
 
 exports.parse = parse
 
+function encoderForArrayFormat(options) {
+  return (key, value) => (value === null ? encode(key, options) : [
+    encode(key, options),
+    '=',
+    encode(value, options),
+  ].join(''))
+}
 
 exports.stringify = (obj, options) => {
   if (!obj) {
