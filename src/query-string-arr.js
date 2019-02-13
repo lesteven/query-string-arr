@@ -84,15 +84,8 @@ function parse(input, type) {
     formatter(key, value, ret)
   }
 
-  if (type !== undefined && type.array) {
-    const arr = []
-    for (key of keyOrder) {
-      arr.push([key, ret[key]])
-    }
-    return arr
-  }
 
-  return Object.keys(ret).sort().reduce((result, key) => {
+  const obj = Object.keys(ret).sort().reduce((result, key) => {
     const value = ret[key]
     if (Boolean(value) && typeof value === 'object' && !Array.isArray(value)) {
       // Sort object keys, not values
@@ -103,6 +96,16 @@ function parse(input, type) {
 
     return result
   }, Object.create(null))
+
+  if (type !== undefined && type.array) {
+    const arr = []
+    for (key of keyOrder) {
+      arr.push([key, ret[key]])
+    }
+    return arr
+  }
+
+  return obj
 }
 
 exports.parse = parse
