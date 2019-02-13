@@ -5,6 +5,7 @@ const decodeComponent = require('decode-uri-component')
 
 function parserForArrayFormat() {
   return (key, value, accumulator) => {
+    let result
     if (accumulator[key] === undefined) {
       accumulator[key] = value
       return
@@ -64,7 +65,7 @@ function parse(input, type) {
     // http://w3.org/TR/2012/WD-url-20120524/#collect-url-parameters
     value = value === undefined ? null : decode(value, options)
     key = decode(key, options)
-    if (!ret.key) {
+    if (ret[key] === undefined) {
       keyOrder.push(key)
     }
     formatter(key, value, ret)
