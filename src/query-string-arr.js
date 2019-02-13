@@ -110,26 +110,10 @@ function encoderForArrayFormat(options) {
   ].join(''))
 }
 
-exports.stringify = (obj, options) => {
-  if (!obj) {
-    return ''
-  }
-
-  options = Object.assign({
-    encode: true,
-    strict: true,
-    arrayFormat: 'none',
-  }, options)
-
-  const formatter = encoderForArrayFormat(options)
-  const keys = Object.keys(obj)
-
-  if (options.sort !== false) {
-    keys.sort(options.sort)
-  }
-
-  return keys.map((key) => {
-    const value = obj[key]
+function stringifyHelper(arr, isArray, formatter, options) {
+  return arr.map((val) => {
+    const value = isArray ? val[1] : arr[val]
+    const key = isArray ? val[0] : val
 
     if (value === undefined) {
       return ''
@@ -144,13 +128,35 @@ exports.stringify = (obj, options) => {
 
       for (const value2 of value.slice()) {
         if (value2 !== undefined) {
-          result.push(formatter(key, value2, result.length))
+          result.push(formatter(key, value2))
         }
       }
-
       return result.join('&')
     }
 
     return `${encode(key, options)}=${encode(value, options)}`
   }).filter(x => x.length > 0).join('&')
+}
+
+exports.stringify = (obj, options) => {
+  if (!obj) {
+    return ''
+  }
+
+  options = Object.assign({
+    encode: true,
+    strict: true,
+    arrayFormat: 'none',
+  }, options)
+
+  const formatter = encoderForArrayFormat(options)
+  const isArray = Array.isArray(obj)
+  if (isArray) return stringifyHelper(obj, isArray, formatter, options)
+
+  const keys = Object.keys(obj)
+
+  if (options.sort !== false) {
+    keys.sort(options.sort)
+  }
+  return stringifyHelper(obj, !isArray, formatter, options)
 }
