@@ -114,6 +114,7 @@ function stringifyHelper(arr, isArray, formatter, options, obj) {
   return arr.map((val) => {
     const value = isArray ? val[1] : obj[val]
     const key = isArray ? val[0] : val
+
     if (value === undefined) {
       return ''
     }
@@ -150,6 +151,7 @@ exports.stringify = (obj, options) => {
 
   const formatter = encoderForArrayFormat(options)
   const isArray = Array.isArray(obj)
+
   if (isArray) return stringifyHelper(obj, isArray, formatter, options)
 
   const keys = Object.keys(obj)
